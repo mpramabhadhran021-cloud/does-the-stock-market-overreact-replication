@@ -1,74 +1,63 @@
 # Does the Stock Market Overreact? — Replication & Extension
 
-Master's-level research project replicating De Bondt, W. F. M. & Thaler, R. (1985), *"Does the
-Stock Market Overreact?"*, **The Journal of Finance**, 40(3), 793–805, and extending it with one
-small, literature-motivated follow-up analysis.
+## What is this project?
 
-## Structure
+This is a master's-level replication of De Bondt and Thaler (1985), Does the Stock Market Overreact?
 
-```
-README.md
-requirements.txt
-01_replication.ipynb   # reproduces the paper's main result with public data
-02_extension.ipynb     # extension: has the reversal spread weakened over time?
-data/                  # created/cached by the notebooks on first run
-  sp500_constituents.csv   # ticker universe (included; re-downloaded automatically if missing)
-  monthly_prices.csv       # price panel (built by Notebook 1; not included — see below)
-  excess_returns.csv       # market-adjusted excess returns (built by Notebook 1)
-  replication_car_results.csv  # per-replication CAR results (built by Notebook 1, used by Notebook 2)
-```
+The paper studies whether stocks that performed poorly in the past tend to perform better later, while past winners tend to perform worse later.
 
-Run **`01_replication.ipynb` first, top to bottom**, then `02_extension.ipynb`. Notebook 2 reads
-`data/replication_car_results.csv`, which Notebook 1 produces.
+I reproduce the main result with public data and then add one small extension.
 
-## What each notebook contains
+## Research Question
 
-**Notebook 1 — Replication.** Paper summary, research question and hypotheses, data sourcing and
-cleaning, a full implementation of the original 3-year formation / 3-year test, decile-portfolio,
-market-adjusted-excess-return methodology (including the paper's own pooled-variance t-statistic),
-the headline result, a side-by-side comparison with the original paper's numbers, and a discussion
-of similarities/differences.
+> Can the main long-term reversal result from De Bondt and Thaler (1985) be reproduced with a modern public dataset?
 
-**Notebook 2 — Extension.** Motivated by the later "anomalies decay after publication" literature
-(McLean & Pontiff, 2016), it splits the replication's formation dates into an early and a late
-sub-sample and re-runs the *same* ACAR/t-statistic computation on each, to see whether the
-reversal spread has weakened within the (already post-1985) window our data covers.
+The extension asks whether the reversal result is different in earlier and later parts of the available sample.
 
 ## Data
 
-The original paper uses CRSP (NYSE common stocks, 1926–1982), a proprietary database we don't
-have access to. We substitute a free, public alternative:
+The original paper used CRSP data, which are not freely available.
 
-- **Universe:** current S&P 500 constituents (`data/sp500_constituents.csv`, from a public
-  GitHub mirror of the Wikipedia constituents table).
-- **Prices:** monthly adjusted close from Yahoo Finance, via the `yfinance` package, roughly
-  1995–present.
-- **Market index:** equal-weighted average return across the sample each month (a proxy for the
-  CRSP equal-weighted index used in the original).
+For this project I use current S&P 500 constituents, monthly adjusted prices from Yahoo Finance, and an equal-weighted market return calculated from the sample.
 
-This is a disclosed, deliberate simplification made necessary by data access, not an attempt to
-match CRSP exactly. It introduces survivorship bias and a shorter, more recent, lower-power sample
-than the original — this is discussed explicitly in both notebooks.
+This is not the same dataset as the original paper, and the difference is discussed in the notebooks.
 
-**Reproducibility note.** `01_replication.ipynb` downloads price history via `yfinance`, which
-needs a normal internet connection to Yahoo Finance. Once downloaded, prices are cached to
-`data/monthly_prices.csv` so later cells, re-runs, and Notebook 2 never need to re-download
-anything. (This repository ships `data/sp500_constituents.csv`, a small ticker list fetched from a
-GitHub mirror, but not the larger price panel, which each user should download fresh.)
+## Notebook 1 — Replication
 
-## Environment
+Notebook 1 explains the paper, prepares the data, forms winner and loser portfolios, calculates cumulative abnormal returns, and compares the result with the original paper.
 
-```
+## Notebook 2 — Extension
+
+Notebook 2 splits the available formation dates into an earlier and later group and repeats the same calculation.
+
+The purpose is to see whether the reversal result looks different across the sample period.
+
+## Main Result
+
+The public-data replication produces a reversal pattern, but the result is not identical to the original paper.
+
+This is expected because the sample, stock universe, market measure, and data period are different.
+
+The extension is exploratory and is not a full test of the later anomaly literature.
+
+## Repository
+
+01_replication.ipynb — replication
+02_extension.ipynb — extension
+data/ — data created by the notebooks
+requirements.txt — required packages
+
+## How to Run
+
 pip install -r requirements.txt
 jupyter notebook
-```
 
-## Scope and honesty about limitations
+Run 01_replication.ipynb first and then 02_extension.ipynb.
 
-This project deliberately replicates only the paper's headline 3-year/3-year result and pursues
-one manageable extension, rather than every robustness table in the original (1-, 2-, and 5-year
-formation variants, CAPM-beta comparison, January-seasonality tables). Every methodological choice
-and every deviation from the original paper is called out explicitly in the notebooks, and both
-notebooks interpret their own numbers programmatically (via `f-string`-driven narrative cells) so
-the written discussion always matches whatever the code actually produces when run — nothing here
-is a fabricated or hard-coded result.
+## Limitations
+
+The biggest limitation is that I cannot use the original CRSP dataset.
+
+Using current S&P 500 constituents creates survivorship bias, and the public sample is shorter and more recent than the original paper's sample.
+
+The project is therefore a replication exercise rather than an exact reproduction.
