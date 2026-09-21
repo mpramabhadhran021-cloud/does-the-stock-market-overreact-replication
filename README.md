@@ -1,63 +1,59 @@
-# Does the Stock Market Overreact? — Replication & Extension
+# Does the Stock Market Overreact? — Replication
 
-## What is this project?
+A simple replication of De Bondt and Thaler (1985), *Does the Stock Market Overreact?*
 
-This is a master's-level replication of De Bondt and Thaler (1985), Does the Stock Market Overreact?
+## Question
 
-The paper studies whether stocks that performed poorly in the past tend to perform better later, while past winners tend to perform worse later.
+Do stocks that performed badly in the past later perform better than stocks that performed well?
 
-I reproduce the main result with public data and then add one small extension.
-
-## Research Question
-
-> Can the main long-term reversal result from De Bondt and Thaler (1985) be reproduced with a modern public dataset?
-
-The extension asks whether the reversal result is different in earlier and later parts of the available sample.
+The original paper found evidence of long-term reversal. I try to reproduce the main idea using public data.
 
 ## Data
 
-The original paper used CRSP data, which are not freely available.
+The original paper used CRSP data. I do not have access to CRSP, so I use:
 
-For this project I use current S&P 500 constituents, monthly adjusted prices from Yahoo Finance, and an equal-weighted market return calculated from the sample.
+- current S&P 500 constituents
+- monthly adjusted prices from Yahoo Finance
+- an equal-weighted market return calculated from the sample
 
-This is not the same dataset as the original paper, and the difference is discussed in the notebooks.
+Because I use today's S&P 500 members, the data have **survivorship bias**. So this is not an exact reproduction of the original paper.
 
-## Notebook 1 — Replication
+## Method
 
-Notebook 1 explains the paper, prepares the data, forms winner and loser portfolios, calculates cumulative abnormal returns, and compares the result with the original paper.
+I follow the main 3-year formation / 3-year test design:
 
-## Notebook 2 — Extension
+1. Calculate monthly stock returns.
+2. Calculate the equal-weighted market return.
+3. Subtract the market return from each stock return.
+4. Rank stocks using their previous 3-year performance.
+5. Form winner and loser portfolios.
+6. Track the portfolios for the next 3 years.
+7. Compare the loser and winner returns.
 
-Notebook 2 splits the available formation dates into an earlier and later group and repeats the same calculation.
+## Files
 
-The purpose is to see whether the reversal result looks different across the sample period.
+- `01_replication.ipynb` — main replication
+- `02_extension.ipynb` — simple time-split extension
+- `data/` — data and results created by the notebooks
+- `requirements.txt` — Python packages
 
-## Main Result
+## Extension
 
-The public-data replication produces a reversal pattern, but the result is not identical to the original paper.
+The second notebook splits the available formation periods into an early and a late group and repeats the same calculation.
 
-This is expected because the sample, stock universe, market measure, and data period are different.
+This is only a small exploratory extension. It is not a full test of whether the anomaly disappeared after the original paper.
 
-The extension is exploratory and is not a full test of the later anomaly literature.
+## Main limitation
 
-## Repository
+The biggest limitation is the data. Current S&P 500 members are not the same as the historical stock universe used by De Bondt and Thaler.
 
-01_replication.ipynb — replication
-02_extension.ipynb — extension
-data/ — data created by the notebooks
-requirements.txt — required packages
+So the goal of this project is **to understand and reproduce the method**, not to claim an exact reproduction of the original result.
 
-## How to Run
+## How to run
 
+```bash
 pip install -r requirements.txt
 jupyter notebook
+```
 
-Run 01_replication.ipynb first and then 02_extension.ipynb.
-
-## Limitations
-
-The biggest limitation is that I cannot use the original CRSP dataset.
-
-Using current S&P 500 constituents creates survivorship bias, and the public sample is shorter and more recent than the original paper's sample.
-
-The project is therefore a replication exercise rather than an exact reproduction.
+Run `01_replication.ipynb` first and then `02_extension.ipynb`.
